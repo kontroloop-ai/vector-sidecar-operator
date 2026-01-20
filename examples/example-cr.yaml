@@ -1,0 +1,31 @@
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-sidecar-example
+  namespace: default
+spec:
+  enabled: true
+  selector:
+    matchLabels:
+      observability: vector
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: vector-config
+        key: vector.yaml
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  volumes:
+    - name: varlog
+      hostPath:
+        path: /var/log

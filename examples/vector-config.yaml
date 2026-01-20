@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+  namespace: default
+data:
+  vector.yaml: |
+    # Vector configuration for log collection
+    sources:
+      kubernetes_logs:
+        type: kubernetes_logs
+        
+    transforms:
+      parse_logs:
+        type: remap
+        inputs:
+          - kubernetes_logs
+        source: |
+          . = parse_json!(.message)
+          
+    sinks:
+      stdout:
+        type: console
+        inputs:
+          - parse_logs
+        encoding:
+          codec: json

@@ -1,0 +1,31 @@
+# permissions for end users to edit vectorsidecars.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: vectorsidecar-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: 696f7dc043f2c91178ad7d83
+    app.kubernetes.io/part-of: 696f7dc043f2c91178ad7d83
+    app.kubernetes.io/managed-by: kustomize
+  name: vectorsidecar-editor-role
+rules:
+- apiGroups:
+  - observability.amitde789696.io
+  resources:
+  - vectorsidecars
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - observability.amitde789696.io
+  resources:
+  - vectorsidecars/status
+  verbs:
+  - get

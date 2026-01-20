@@ -1,0 +1,155 @@
+# Production-grade VectorSidecar example with comprehensive configuration
+# This example shows a production-ready setup with:
+# - Resource limits and requests
+# - Multiple volume mounts
+# - Environment variables
+# - Init containers for setup tasks
+
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-production
+  namespace: production
+  labels:
+    environment: production
+    managed-by: platform-team
+spec:
+  enabled: true
+
+  # Target production workloads
+  selector:
+    matchLabels:
+      environment: production
+      observability: enabled
+
+  # Vector sidecar configuration
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0-alpine
+    imagePullPolicy: IfNotPresent
+
+    # Vector configuration from ConfigMap
+    config:
+      configMapRef:
+        name: vector-production-config
+        key: vector.yaml
+
+    # Environment variables for Vector
+    env:
+      - name: VECTOR_LOG
+        value: info
+      - name: VECTOR_REQUIRE_HEALTHY
+        value: "true"
+      - name: ENVIRONMENT
+        value: production
+
+    # Resource management - critical for production
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+
+    # Volume mounts for log collection
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+        readOnly: true
+      - name: app-logs
+        mountPath: /app/logs
+        readOnly: true
+      - name: vector-data
+        mountPath: /var/lib/vector
+
+  # Additional volumes needed by the sidecar
+  volumes:
+    - name: varlog
+      hostPath:
+        path: /var/log
+        type: Directory
+    - name: app-logs
+      emptyDir: {}
+    - name: vector-data
+      emptyDir:
+        sizeLimit: 1Gi
+---
+# Production Vector configuration ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-production-config
+  namespace: production
+data:
+  vector.yaml: |
+    # Vector production configuration
+    data_dir: /var/lib/vector
+
+    # Sources - collect logs from multiple locations
+    sources:
+      kubernetes_logs:
+        type: kubernetes_logs
+        auto_partial_merge: true
+
+      app_logs:
+        type: file
+        include:
+          - /app/logs/*.log
+        read_from: beginning
+
+    # Transforms - enrich and parse logs
+    transforms:
+      parse_json:
+        type: remap
+        inputs:
+          - kubernetes_logs
+          - app_logs
+        source: |
+          # Parse JSON logs
+          if is_string(.message) {
+            parsed, err = parse_json(.message)
+            if err == null {
+              . = merge(., parsed)
+            }
+          }
+
+          # Add standard fields
+          .environment = "production"
+          .cluster = get_env_var!("CLUSTER_NAME")
+
+      # Filter out noisy logs
+      filter_logs:
+        type: filter
+        inputs:
+          - parse_json
+        condition: |
+          .level != "debug" &&
+          !contains(string!(.message), "healthcheck")
+
+    # Sinks - send to observability backend
+    sinks:
+      # Send to Elasticsearch
+      elasticsearch:
+        type: elasticsearch
+        inputs:
+          - filter_logs
+        endpoint: "https://elasticsearch.observability.svc.cluster.local:9200"
+        mode: bulk
+        bulk:
+          index: "vector-logs-%Y-%m-%d"
+        compression: gzip
+
+      # Backup to S3 for long-term storage
+      s3:
+        type: aws_s3
+        inputs:
+          - filter_logs
+        bucket: "production-logs-backup"
+        key_prefix: "vector-logs/date=%Y-%m-%d/"
+        compression: gzip
+        encoding:
+          codec: json
+        batch:
+          max_bytes: 10485760  # 10MB
+          timeout_secs: 300

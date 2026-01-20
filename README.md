@@ -1,6 +1,25 @@
-# Vector.dev Sidecar Injection Operator
+<div align="center">
+
+![Vector Sidecar Operator Banner](docs/banner.svg)
+
+# Vector Sidecar Injection Operator
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](go.mod)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.20+-326CE5?logo=kubernetes)](https://kubernetes.io)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A production-ready Kubernetes operator that automatically injects [Vector.dev](https://vector.dev) sidecar containers into workloads based on label selectors, enabling per-workload observability configuration at scale.
+
+[Features](#key-features) •
+[Quick Start](#quick-start) •
+[Documentation](#documentation) •
+[Examples](#examples) •
+[Contributing](#contributing)
+
+</div>
+
+---
 
 ## Overview
 
@@ -385,21 +404,42 @@ The operator uses finalizers to ensure proper cleanup:
 
 - `vectorsidecar.observability.amitde789696.io/finalizer`: Ensures sidecars are removed before CR deletion
 
+## Documentation
+
+📚 **Comprehensive guides available in the [`docs/`](docs/) directory:**
+
+- [**Getting Started Guide**](docs/getting-started.md) - Step-by-step installation and first deployment
+- [**Architecture Guide**](docs/architecture.md) - Deep dive into operator design and patterns
+- [**Configuration Reference**](docs/configuration.md) - Complete API reference and examples
+- [**Best Practices**](docs/best-practices.md) - Production deployment recommendations
+- [**Troubleshooting Guide**](docs/troubleshooting.md) - Common issues and solutions
+- [**Development Guide**](docs/development.md) - Contributing and local development setup
+
 ## Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome! We appreciate all contributions, from bug reports to feature implementations.
+
+**Please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide before submitting pull requests.**
+
+Quick contribution steps:
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes with clear commit messages
 4. Add tests for new functionality
-5. Submit a pull request
+5. Ensure all tests pass (`make test`)
+6. Submit a pull request
+
+### Code of Conduct
+
+This project follows the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
 
 ### Code Style
 
-- Follow standard Go formatting (`gofmt`)
+- Follow standard Go formatting (`go fmt`, `go vet`)
 - Add comprehensive comments for complex logic
 - Include unit tests for new features
+- Keep functions focused and testable
 
 ## License
 

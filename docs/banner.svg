@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="300" fill="url(#bgGradient)"/>
+
+  <!-- Kubernetes hexagon logo style -->
+  <g transform="translate(150, 150)">
+    <!-- Main container hexagon -->
+    <path d="M 0,-60 L 52,-30 L 52,30 L 0,60 L -52,30 L -52,-30 Z"
+          fill="#326ce5" stroke="#fff" stroke-width="3" opacity="0.9"/>
+    <!-- Inner detail -->
+    <circle cx="0" cy="0" r="35" fill="none" stroke="#fff" stroke-width="2" opacity="0.7"/>
+    <path d="M 0,-35 L 0,35 M -35,0 L 35,0" stroke="#fff" stroke-width="2" opacity="0.7"/>
+  </g>
+
+  <!-- Vector.dev representation (data flow) -->
+  <g transform="translate(350, 150)">
+    <!-- Sidecar container -->
+    <rect x="-40" y="-50" width="80" height="100" rx="8"
+          fill="url(#accentGradient)" stroke="#fff" stroke-width="2" opacity="0.9"/>
+    <!-- Vector icon/symbol -->
+    <path d="M -20,-20 L 0,20 L 20,-20" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="0" cy="-25" r="5" fill="#fff"/>
+    <circle cx="0" cy="25" r="5" fill="#fff"/>
+  </g>
+
+  <!-- Connection lines showing injection -->
+  <path d="M 200,150 L 310,150" stroke="#10b981" stroke-width="3" stroke-dasharray="8,4" opacity="0.7"/>
+
+  <!-- Title Text -->
+  <text x="500" y="120" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="#ffffff">
+    Vector Sidecar
+  </text>
+  <text x="500" y="175" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="#e0f2fe">
+    Injection Operator
+  </text>
+
+  <!-- Subtitle -->
+  <text x="500" y="215" font-family="Arial, sans-serif" font-size="20" fill="#93c5fd">
+    Automated Vector.dev Sidecar Management for Kubernetes
+  </text>
+
+  <!-- Decorative elements -->
+  <circle cx="1050" cy="80" r="15" fill="#10b981" opacity="0.3"/>
+  <circle cx="1100" cy="220" r="20" fill="#06b6d4" opacity="0.3"/>
+  <circle cx="980" cy="250" r="12" fill="#10b981" opacity="0.3"/>
+</svg>

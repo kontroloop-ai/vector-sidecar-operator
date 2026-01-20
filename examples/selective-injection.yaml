@@ -1,0 +1,203 @@
+# Selective injection examples showing fine-grained workload targeting
+
+---
+# Example 1: Inject into specific application tier
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-api-tier
+  namespace: default
+spec:
+  enabled: true
+  selector:
+    matchLabels:
+      tier: api
+      collect-logs: "true"
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      inline: |
+        sources:
+          api_logs:
+            type: file
+            include: ["/var/log/api/*.log"]
+
+        sinks:
+          s3:
+            type: aws_s3
+            inputs: [api_logs]
+            bucket: api-logs
+    volumeMounts:
+      - name: api-logs
+        mountPath: /var/log/api
+  volumes:
+    - name: api-logs
+      emptyDir: {}
+
+---
+# Example 2: Inject based on multiple labels (AND condition)
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-critical-services
+  namespace: default
+spec:
+  enabled: true
+  selector:
+    matchLabels:
+      criticality: high
+      compliance: required
+      observability: enabled
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: compliance-vector-config
+        key: vector.yaml
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+---
+# Example 3: Inject using matchExpressions for complex selectors
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-multi-app
+  namespace: default
+spec:
+  enabled: true
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: ["frontend", "backend", "api"]
+      - key: monitoring
+        operator: Exists
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      inline: |
+        sources:
+          k8s_logs:
+            type: kubernetes_logs
+
+        transforms:
+          add_app_context:
+            type: remap
+            inputs: [k8s_logs]
+            source: |
+              .app_tier = .kubernetes.pod_labels.app
+
+        sinks:
+          console:
+            type: console
+            inputs: [add_app_context]
+            encoding:
+              codec: json
+
+---
+# Example 4: Namespace-wide injection with opt-out capability
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-namespace-default
+  namespace: default
+spec:
+  enabled: true
+  # This will match all deployments that have the opt-in label
+  selector:
+    matchLabels:
+      vector-injection: enabled
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: default-vector-config
+        key: vector.yaml
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
+
+---
+# Supporting ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-vector-config
+  namespace: default
+data:
+  vector.yaml: |
+    sources:
+      kubernetes_logs:
+        type: kubernetes_logs
+
+    sinks:
+      stdout:
+        type: console
+        inputs: [kubernetes_logs]
+        encoding:
+          codec: json
+
+---
+# Example deployment that WILL be injected (matches labels)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-with-vector
+  namespace: default
+  labels:
+    app: frontend
+    vector-injection: enabled
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        vector-injection: enabled
+    spec:
+      containers:
+      - name: app
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+---
+# Example deployment that will NOT be injected (no matching labels)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-without-vector
+  namespace: default
+  labels:
+    app: internal-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: internal-tool
+  template:
+    metadata:
+      labels:
+        app: internal-tool
+    spec:
+      containers:
+      - name: tool
+        image: busybox:latest
+        command: ["sleep", "3600"]

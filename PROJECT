@@ -10,4 +10,14 @@ plugins:
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: 696f7dc043f2c91178ad7d83
 repo: github.com/amitde789696/vector-sidecar-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: amitde789696.io
+  group: observability
+  kind: VectorSidecar
+  path: github.com/amitde789696/vector-sidecar-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"

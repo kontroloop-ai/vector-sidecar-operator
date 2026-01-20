@@ -30,6 +30,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	observabilityv1alpha1 "github.com/amitde789696/vector-sidecar-operator/api/v1alpha1"
+	"github.com/amitde789696/vector-sidecar-operator/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -41,6 +44,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
+	utilruntime.Must(observabilityv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -48,8 +52,13 @@ func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
+	var disableMetrics bool
+	var disableHealthProbes bool
+
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
+	flag.BoolVar(&disableMetrics, "disable-metrics", false, "Disable metrics server to avoid port conflicts in dev environments")
+	flag.BoolVar(&disableHealthProbes, "disable-health-probes", false, "Disable health probe endpoints to avoid port conflicts in dev environments")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -60,6 +69,16 @@ func main() {
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+
+	// Disable metrics and health probes if requested
+	if disableMetrics {
+		metricsAddr = "0"
+		setupLog.Info("Metrics server disabled")
+	}
+	if disableHealthProbes {
+		probeAddr = "0"
+		setupLog.Info("Health probes disabled")
+	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -85,6 +104,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err = (&controllers.VectorSidecarReconciler{
+		Client:   mgr.GetClient(),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor("vectorsidecar-controller"),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VectorSidecar")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

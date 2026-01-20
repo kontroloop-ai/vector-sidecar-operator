@@ -113,6 +113,13 @@ func (r *VectorSidecarReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 		r.updateStatusCondition(ctx, vectorSidecar, observabilityv1alpha1.ConditionTypeConfigValid,
 			metav1.ConditionFalse, "ValidationFailed", err.Error())
 		r.Recorder.Event(vectorSidecar, corev1.EventTypeWarning, "ValidationFailed", err.Error())
+
+		// Persist the status change
+		if statusErr := r.Status().Update(ctx, vectorSidecar); statusErr != nil {
+			logger.Error(statusErr, "Failed to update status after validation failure")
+			return ctrl.Result{}, statusErr
+		}
+
 		return ctrl.Result{RequeueAfter: time.Minute}, nil
 	}
 

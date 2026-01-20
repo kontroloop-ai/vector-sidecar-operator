@@ -2,7 +2,7 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/observability.amitde789696.io_vectorsidecars.yaml
+- bases/observability.kontroloop.ai_vectorsidecars.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:

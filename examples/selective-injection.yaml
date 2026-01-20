@@ -2,7 +2,7 @@
 
 ---
 # Example 1: Inject into specific application tier
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-api-tier
@@ -37,7 +37,7 @@ spec:
 
 ---
 # Example 2: Inject based on multiple labels (AND condition)
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-critical-services
@@ -66,7 +66,7 @@ spec:
 
 ---
 # Example 3: Inject using matchExpressions for complex selectors
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-multi-app
@@ -105,7 +105,7 @@ spec:
 
 ---
 # Example 4: Namespace-wide injection with opt-out capability
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-namespace-default

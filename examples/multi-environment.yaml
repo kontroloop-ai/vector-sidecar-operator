@@ -3,7 +3,7 @@
 
 ---
 # Development Environment - verbose logging, console output
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-dev
@@ -49,7 +49,7 @@ spec:
 
 ---
 # Staging Environment - moderate logging, send to staging backend
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-staging
@@ -88,7 +88,7 @@ spec:
 
 ---
 # Production Environment - minimal logging, high performance
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-prod

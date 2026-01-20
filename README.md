@@ -1,80 +1,405 @@
-# 696f7dc043f2c91178ad7d83
-// TODO(user): Add simple overview of use/purpose
+# Vector.dev Sidecar Injection Operator
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+A production-ready Kubernetes operator that automatically injects [Vector.dev](https://vector.dev) sidecar containers into workloads based on label selectors, enabling per-workload observability configuration at scale.
 
-## Getting Started
-You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
-**Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
+## Overview
 
-### Running on the cluster
-1. Install Instances of Custom Resources:
+The Vector Sidecar Injection Operator watches for `VectorSidecar` Custom Resources and automatically injects Vector sidecar containers into matching Kubernetes Deployments. This enables centralized management of observability infrastructure while maintaining per-workload configuration flexibility.
 
-```sh
-kubectl apply -f config/samples/
-```
+### Key Features
 
-2. Build and push your image to the location specified by `IMG`:
+- **Label-Based Workload Selection**: Target specific Deployments using Kubernetes label selectors
+- **Idempotent Injection**: Smart hash-based tracking prevents unnecessary rollouts
+- **ConfigMap-Based Configuration**: External configuration management with automatic reload support
+- **Resource Management**: Full support for CPU/memory requests and limits
+- **Status Reporting**: Comprehensive status conditions and deployment tracking
+- **Cleanup on Deletion**: Automatic sidecar removal when VectorSidecar CR is deleted or disabled
+- **Namespace-Scoped**: Operates within namespace boundaries for security
 
-```sh
-make docker-build docker-push IMG=<some-registry>/696f7dc043f2c91178ad7d83:tag
-```
+## Architecture
 
-3. Deploy the controller to the cluster with the image specified by `IMG`:
+The operator implements a reconciliation loop that:
 
-```sh
-make deploy IMG=<some-registry>/696f7dc043f2c91178ad7d83:tag
-```
+1. Watches `VectorSidecar` CRs for injection rules
+2. Discovers Deployments matching the label selector
+3. Calculates injection configuration hash
+4. Injects Vector sidecar if configuration changed
+5. Reports status with matched/injected deployment counts
 
-### Uninstall CRDs
-To delete the CRDs from the cluster:
+### Idempotent Injection
 
-```sh
-make uninstall
-```
+The operator uses SHA256 hashing of the injection configuration to ensure deployments are only updated when the sidecar configuration actually changes. This prevents unnecessary pod restarts and maintains cluster stability.
 
-### Undeploy controller
-UnDeploy the controller from the cluster:
+## Installation
 
-```sh
-make undeploy
-```
+### Prerequisites
 
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+- Kubernetes cluster (v1.20+)
+- kubectl configured to access your cluster
+- Cluster admin permissions for CRD installation
 
-### How it works
-This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
+### Quick Start
 
-It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/),
-which provide a reconcile function responsible for synchronizing resources until the desired state is reached on the cluster.
+1. **Install the CRDs**:
 
-### Test It Out
-1. Install the CRDs into the cluster:
-
-```sh
+```bash
 make install
 ```
 
-2. Run your controller (this will run in the foreground, so switch to a new terminal if you want to leave it running):
+2. **Run the operator** (for development):
 
-```sh
+```bash
 make run
 ```
 
-**NOTE:** You can also run this in one step by running: `make install run`
+Or deploy to the cluster:
 
-### Modifying the API definitions
-If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
-
-```sh
-make manifests
+```bash
+make deploy IMG=<your-registry>/vector-sidecar-operator:latest
 ```
 
-**NOTE:** Run `make --help` for more information on all potential `make` targets
+### Using Pre-built Flags
 
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+For development environments where port conflicts may occur:
+
+```bash
+make run ARGS="--disable-metrics --disable-health-probes"
+```
+
+## Usage
+
+### 1. Create a Vector Configuration ConfigMap
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+  namespace: default
+data:
+  vector.yaml: |
+    sources:
+      kubernetes_logs:
+        type: kubernetes_logs
+
+    sinks:
+      stdout:
+        type: console
+        inputs:
+          - kubernetes_logs
+        encoding:
+          codec: json
+```
+
+### 2. Create a VectorSidecar CR
+
+```yaml
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-sidecar-example
+  namespace: default
+spec:
+  enabled: true
+  selector:
+    matchLabels:
+      observability: vector
+  sidecar:
+    name: vector
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: vector-config
+        key: vector.yaml
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  volumes:
+    - name: varlog
+      hostPath:
+        path: /var/log
+```
+
+### 3. Label Your Deployments
+
+Add the matching label to your Deployment:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    observability: vector  # This matches the selector
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: nginx:latest
+```
+
+### 4. Verify Injection
+
+Check the VectorSidecar status:
+
+```bash
+kubectl get vectorsidecar -o wide
+```
+
+Expected output:
+```
+NAME                      ENABLED   MATCHED   INJECTED   READY   AGE
+vector-sidecar-example    true      1         1          True    2m
+```
+
+Verify the sidecar was injected:
+
+```bash
+kubectl get deployment my-app -o jsonpath='{.spec.template.spec.containers[*].name}'
+```
+
+Should show: `app vector`
+
+## Configuration Reference
+
+### VectorSidecarSpec
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `enabled` | bool | Yes | Controls whether injection is active |
+| `selector` | LabelSelector | Yes | Label selector for matching Deployments |
+| `sidecar` | SidecarConfig | Yes | Vector sidecar container configuration |
+| `initContainers` | []Container | No | Optional init containers to inject |
+| `volumes` | []Volume | No | Additional volumes to mount |
+
+### SidecarConfig
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | No | Container name (default: "vector") |
+| `image` | string | Yes | Vector container image |
+| `imagePullPolicy` | PullPolicy | No | Image pull policy (default: IfNotPresent) |
+| `config` | VectorConfig | Yes | Vector configuration source |
+| `volumeMounts` | []VolumeMount | No | Volume mounts for the container |
+| `resources` | ResourceRequirements | No | CPU/memory requests and limits |
+| `env` | []EnvVar | No | Environment variables |
+| `args` | []string | No | Additional container arguments |
+
+### VectorConfig
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `configMapRef` | ConfigMapRef | No* | Reference to ConfigMap containing config |
+| `inline` | string | No* | Inline Vector configuration (YAML/TOML) |
+
+*One of `configMapRef` or `inline` must be specified.
+
+## Status Conditions
+
+The operator reports status through standard Kubernetes conditions:
+
+- **Ready**: Sidecar injection is operating normally
+- **ConfigValid**: Vector configuration passed validation
+- **Error**: An error occurred during reconciliation
+
+Check status:
+
+```bash
+kubectl describe vectorsidecar vector-sidecar-example
+```
+
+## Advanced Usage
+
+### Disable Injection Temporarily
+
+Set `enabled: false` to remove sidecars from all matched deployments:
+
+```bash
+kubectl patch vectorsidecar vector-sidecar-example -p '{"spec":{"enabled":false}}' --type=merge
+```
+
+### Multiple VectorSidecar Configurations
+
+You can create multiple VectorSidecar CRs with different selectors:
+
+```yaml
+# Production workloads
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-production
+spec:
+  selector:
+    matchLabels:
+      env: production
+  sidecar:
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: vector-config-prod
+---
+# Development workloads
+apiVersion: observability.amitde789696.io/v1alpha1
+kind: VectorSidecar
+metadata:
+  name: vector-development
+spec:
+  selector:
+    matchLabels:
+      env: development
+  sidecar:
+    image: timberio/vector:0.35.0
+    config:
+      configMapRef:
+        name: vector-config-dev
+```
+
+### Custom Volume Mounts
+
+Add custom volumes for log collection:
+
+```yaml
+spec:
+  sidecar:
+    volumeMounts:
+      - name: app-logs
+        mountPath: /app/logs
+      - name: varlog
+        mountPath: /var/log
+  volumes:
+    - name: app-logs
+      emptyDir: {}
+    - name: varlog
+      hostPath:
+        path: /var/log
+```
+
+## Examples
+
+Complete examples are available in the `examples/` directory:
+
+- `examples/vector-config.yaml` - Sample Vector configuration
+- `examples/test-deployment.yaml` - Test application deployment
+- `examples/example-cr.yaml` - Complete VectorSidecar CR example
+
+Apply all examples:
+
+```bash
+kubectl apply -f examples/
+```
+
+## Development
+
+### Running Tests
+
+Run unit tests:
+
+```bash
+make test
+```
+
+### Building the Operator
+
+```bash
+make build
+```
+
+### Generating Manifests
+
+After modifying API types:
+
+```bash
+make generate  # Generate deepcopy code
+make manifests # Generate CRDs and RBAC
+```
+
+### Local Development
+
+Run the operator locally against your kubeconfig cluster:
+
+```bash
+# Install CRDs
+make install
+
+# Run operator (disabling metrics/health probes to avoid port conflicts)
+make run ARGS="--disable-metrics --disable-health-probes"
+```
+
+## Troubleshooting
+
+### Sidecar Not Injected
+
+1. Check VectorSidecar status:
+   ```bash
+   kubectl describe vectorsidecar <name>
+   ```
+
+2. Verify labels match:
+   ```bash
+   kubectl get deployment <name> --show-labels
+   ```
+
+3. Check operator logs:
+   ```bash
+   kubectl logs -n vector-sidecar-operator-system deployment/vector-sidecar-operator-controller-manager
+   ```
+
+### ConfigMap Not Found
+
+The operator validates ConfigMap existence. Ensure the ConfigMap exists in the same namespace:
+
+```bash
+kubectl get configmap vector-config -n <namespace>
+```
+
+### Unwanted Rollouts
+
+The operator uses hash-based change detection. Rollouts only occur when:
+- Sidecar image changes
+- Configuration changes
+- Resource requirements change
+- Volume mounts change
+
+## Architecture Details
+
+### Annotations
+
+The operator adds these annotations to managed Deployments:
+
+- `vectorsidecar.observability.amitde789696.io/injected`: Set to "true" when injected
+- `vectorsidecar.observability.amitde789696.io/injected-hash`: Hash of injection config
+- `vectorsidecar.observability.amitde789696.io/sidecar-name`: Name of managing VectorSidecar CR
+- `vectorsidecar.observability.amitde789696.io/configmap-version`: ConfigMap resourceVersion
+
+### Finalizers
+
+The operator uses finalizers to ensure proper cleanup:
+
+- `vectorsidecar.observability.amitde789696.io/finalizer`: Ensures sidecars are removed before CR deletion
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
+
+### Code Style
+
+- Follow standard Go formatting (`gofmt`)
+- Add comprehensive comments for complex logic
+- Include unit tests for new features
 
 ## License
 
@@ -91,4 +416,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-

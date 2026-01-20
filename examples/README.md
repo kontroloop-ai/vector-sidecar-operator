@@ -201,7 +201,7 @@ Each example file contains:
 ### Minimal VectorSidecar
 
 ```yaml
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: minimal-example

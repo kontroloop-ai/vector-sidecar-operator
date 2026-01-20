@@ -113,7 +113,7 @@ data:
 ### 2. Create a VectorSidecar CR
 
 ```yaml
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-sidecar-example
@@ -251,7 +251,7 @@ You can create multiple VectorSidecar CRs with different selectors:
 
 ```yaml
 # Production workloads
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-production
@@ -266,7 +266,7 @@ spec:
         name: vector-config-prod
 ---
 # Development workloads
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: vector-development
@@ -393,16 +393,16 @@ The operator uses hash-based change detection. Rollouts only occur when:
 
 The operator adds these annotations to managed Deployments:
 
-- `vectorsidecar.observability.amitde789696.io/injected`: Set to "true" when injected
-- `vectorsidecar.observability.amitde789696.io/injected-hash`: Hash of injection config
-- `vectorsidecar.observability.amitde789696.io/sidecar-name`: Name of managing VectorSidecar CR
-- `vectorsidecar.observability.amitde789696.io/configmap-version`: ConfigMap resourceVersion
+- `vectorsidecar.observability.kontroloop.ai/injected`: Set to "true" when injected
+- `vectorsidecar.observability.kontroloop.ai/injected-hash`: Hash of injection config
+- `vectorsidecar.observability.kontroloop.ai/sidecar-name`: Name of managing VectorSidecar CR
+- `vectorsidecar.observability.kontroloop.ai/configmap-version`: ConfigMap resourceVersion
 
 ### Finalizers
 
 The operator uses finalizers to ensure proper cleanup:
 
-- `vectorsidecar.observability.amitde789696.io/finalizer`: Ensures sidecars are removed before CR deletion
+- `vectorsidecar.observability.kontroloop.ai/finalizer`: Ensures sidecars are removed before CR deletion
 
 ## Documentation
 

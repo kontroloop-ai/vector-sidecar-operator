@@ -58,7 +58,7 @@ The Vector Sidecar Operator is a Kubernetes operator that automatically manages 
 **VectorSidecar CRD** defines the desired state for sidecar injection:
 
 ```yaml
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: example
@@ -207,7 +207,7 @@ func calculateInjectionHash(vectorSidecar *VectorSidecar) string {
 }
 ```
 
-**Hash is stored in:** `vectorsidecar.observability.amitde789696.io/injected-hash` annotation
+**Hash is stored in:** `vectorsidecar.observability.kontroloop.ai/injected-hash` annotation
 
 **Benefits:**
 - ✅ Prevents unnecessary pod restarts
@@ -304,7 +304,7 @@ Finalizers ensure proper cleanup before deletion:
 ```yaml
 metadata:
   finalizers:
-    - vectorsidecar.observability.amitde789696.io/finalizer
+    - vectorsidecar.observability.kontroloop.ai/finalizer
 ```
 
 **Cleanup sequence:**
@@ -483,7 +483,7 @@ rules:
 - apiGroups: ["apps"]
   resources: ["deployments"]
   verbs: ["get", "list", "watch", "update", "patch"]
-- apiGroups: ["observability.amitde789696.io"]
+- apiGroups: ["observability.kontroloop.ai"]
   resources: ["vectorsidecars"]
   verbs: ["get", "list", "watch", "update", "patch"]
 ```

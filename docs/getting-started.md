@@ -96,13 +96,13 @@ kubectl get deployment -n vector-sidecar-operator-system
 kubectl logs -n vector-sidecar-operator-system deployment/vector-sidecar-operator-controller-manager
 
 # Verify CRDs are installed
-kubectl get crd vectorsidecars.observability.amitde789696.io
+kubectl get crd vectorsidecars.observability.kontroloop.ai
 ```
 
 Expected output:
 ```
 NAME                                              CREATED AT
-vectorsidecars.observability.amitde789696.io     2026-01-20T10:00:00Z
+vectorsidecars.observability.kontroloop.ai     2026-01-20T10:00:00Z
 ```
 
 ## First Deployment
@@ -172,7 +172,7 @@ Now create the VectorSidecar resource to inject Vector into your app:
 
 ```bash
 kubectl apply -f - <<EOF
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: my-first-vector

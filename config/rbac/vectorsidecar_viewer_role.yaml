@@ -12,7 +12,7 @@ metadata:
   name: vectorsidecar-viewer-role
 rules:
 - apiGroups:
-  - observability.amitde789696.io
+  - observability.kontroloop.ai
   resources:
   - vectorsidecars
   verbs:
@@ -20,7 +20,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - observability.amitde789696.io
+  - observability.kontroloop.ai
   resources:
   - vectorsidecars/status
   verbs:

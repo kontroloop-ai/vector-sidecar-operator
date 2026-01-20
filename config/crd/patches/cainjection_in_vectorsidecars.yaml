@@ -4,4 +4,4 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: $(CERTIFICATE_NAMESPACE)/$(CERTIFICATE_NAME)
-  name: vectorsidecars.observability.amitde789696.io
+  name: vectorsidecars.observability.kontroloop.ai

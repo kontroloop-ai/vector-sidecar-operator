@@ -106,7 +106,7 @@ selector:
 
 ```yaml
 # ConfigMap approach (Recommended for production)
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: production-vector
@@ -119,7 +119,7 @@ spec:
 
 ---
 # Inline approach (Good for simple cases)
-apiVersion: observability.amitde789696.io/v1alpha1
+apiVersion: observability.kontroloop.ai/v1alpha1
 kind: VectorSidecar
 metadata:
   name: dev-vector
@@ -325,10 +325,10 @@ rules:
 - apiGroups: ["apps"]
   resources: ["deployments"]
   verbs: ["get", "list", "watch", "update", "patch"]
-- apiGroups: ["observability.amitde789696.io"]
+- apiGroups: ["observability.kontroloop.ai"]
   resources: ["vectorsidecars"]
   verbs: ["get", "list", "watch", "update", "patch"]
-- apiGroups: ["observability.amitde789696.io"]
+- apiGroups: ["observability.kontroloop.ai"]
   resources: ["vectorsidecars/status"]
   verbs: ["update", "patch"]
 ```
@@ -543,7 +543,7 @@ env:
 When something isn't working:
 
 1. ✅ Operator running? `kubectl get pod -n vector-sidecar-operator-system`
-2. ✅ CRDs installed? `kubectl get crd vectorsidecars.observability.amitde789696.io`
+2. ✅ CRDs installed? `kubectl get crd vectorsidecars.observability.kontroloop.ai`
 3. ✅ VectorSidecar valid? `kubectl get vectorsidecar -o wide`
 4. ✅ Labels match? `kubectl get deployment --show-labels`
 5. ✅ ConfigMap exists? `kubectl get configmap`

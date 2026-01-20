@@ -43,16 +43,16 @@ import (
 
 const (
 	// AnnotationInjected marks a deployment as having the Vector sidecar injected
-	AnnotationInjected = "vectorsidecar.observability.amitde789696.io/injected"
+	AnnotationInjected = "vectorsidecar.observability.kontroloop.ai/injected"
 	// AnnotationInjectedHash stores the hash of the injected configuration
-	AnnotationInjectedHash = "vectorsidecar.observability.amitde789696.io/injected-hash"
+	AnnotationInjectedHash = "vectorsidecar.observability.kontroloop.ai/injected-hash"
 	// AnnotationVectorSidecarName stores the name of the VectorSidecar CR
-	AnnotationVectorSidecarName = "vectorsidecar.observability.amitde789696.io/sidecar-name"
+	AnnotationVectorSidecarName = "vectorsidecar.observability.kontroloop.ai/sidecar-name"
 	// AnnotationConfigMapVersion stores the resourceVersion of the ConfigMap
-	AnnotationConfigMapVersion = "vectorsidecar.observability.amitde789696.io/configmap-version"
+	AnnotationConfigMapVersion = "vectorsidecar.observability.kontroloop.ai/configmap-version"
 
 	// FinalizerName is the finalizer added to VectorSidecar resources
-	FinalizerName = "vectorsidecar.observability.amitde789696.io/finalizer"
+	FinalizerName = "vectorsidecar.observability.kontroloop.ai/finalizer"
 
 	// Vector config volume name
 	VectorConfigVolumeName = "vector-config"
@@ -65,9 +65,9 @@ type VectorSidecarReconciler struct {
 	Recorder record.EventRecorder
 }
 
-//+kubebuilder:rbac:groups=observability.amitde789696.io,resources=vectorsidecars,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=observability.amitde789696.io,resources=vectorsidecars/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=observability.amitde789696.io,resources=vectorsidecars/finalizers,verbs=update
+//+kubebuilder:rbac:groups=observability.kontroloop.ai,resources=vectorsidecars,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=observability.kontroloop.ai,resources=vectorsidecars/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=observability.kontroloop.ai,resources=vectorsidecars/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;update;patch
 //+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch
 //+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch

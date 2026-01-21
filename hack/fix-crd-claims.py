@@ -89,4 +89,4 @@ def fix_claims(filename):
     print(f"Fixed CRD: {filename}")
 
 if __name__ == "__main__":
-    fix_claims("config/crd/bases/observability.amitde789696.io_vectorsidecars.yaml")
+    fix_claims("config/crd/bases/observability.kontroloop.ai_vectorsidecars.yaml")

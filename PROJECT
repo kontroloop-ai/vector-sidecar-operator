@@ -2,7 +2,7 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: amitde789696.io
+domain: kontroloop.ai
 layout:
 - go.kubebuilder.io/v3
 plugins:
@@ -15,7 +15,7 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: amitde789696.io
+  domain: kontroloop.ai
   group: observability
   kind: VectorSidecar
   path: github.com/amitde789696/vector-sidecar-operator/api/v1alpha1

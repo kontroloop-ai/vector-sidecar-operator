@@ -36,7 +36,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	observabilityv1alpha1 "github.com/amitde789696/vector-sidecar-operator/api/v1alpha1"
 )
@@ -79,6 +78,7 @@ type VectorSidecarReconciler struct {
 // into matching Deployments based on label selectors.
 func (r *VectorSidecarReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
+	logger.Info("*** RECONCILE CALLED ***", "name", req.Name, "namespace", req.Namespace)
 	logger.Info("Reconciling VectorSidecar", "name", req.Name, "namespace", req.Namespace)
 
 	// Fetch the VectorSidecar instance
@@ -204,16 +204,28 @@ func (r *VectorSidecarReconciler) handleDeletion(ctx context.Context, vectorSide
 	}
 
 	// Remove sidecars from deployments that reference this VectorSidecar
+	// Track errors but don't fail the deletion - best effort cleanup
+	var cleanupErrors []string
 	for _, deployment := range deployments.Items {
 		if deployment.Annotations[AnnotationVectorSidecarName] == vectorSidecar.Name {
 			if err := r.removeSidecar(ctx, &deployment); err != nil {
 				logger.Error(err, "Failed to remove sidecar during deletion", "deployment", deployment.Name)
-				return ctrl.Result{}, err
+				cleanupErrors = append(cleanupErrors, fmt.Sprintf("%s: %v", deployment.Name, err))
+				// Continue cleanup even if one deployment fails
+			} else {
+				logger.Info("Removed sidecar during cleanup", "deployment", deployment.Name)
 			}
 		}
 	}
 
-	// Remove finalizer
+	// Log cleanup errors but still remove the finalizer to allow deletion
+	if len(cleanupErrors) > 0 {
+		logger.Info("Some cleanup operations failed, but removing finalizer to allow deletion", "errors", cleanupErrors)
+		r.Recorder.Event(vectorSidecar, corev1.EventTypeWarning, "PartialCleanup",
+			fmt.Sprintf("Failed to clean up some deployments: %v", cleanupErrors))
+	}
+
+	// Remove finalizer - always try to remove it to prevent stuck resources
 	controllerutil.RemoveFinalizer(vectorSidecar, FinalizerName)
 	if err := r.Update(ctx, vectorSidecar); err != nil {
 		logger.Error(err, "Failed to remove finalizer")
@@ -329,9 +341,15 @@ func (r *VectorSidecarReconciler) injectSidecar(ctx context.Context, vectorSidec
 	if deployment.Annotations != nil {
 		if existingHash, ok := deployment.Annotations[AnnotationInjectedHash]; ok {
 			if existingHash == currentHash {
-				logger.Info("Deployment already has matching sidecar, skipping", "deployment", deployment.Name)
+				logger.Info("Deployment already has matching sidecar configuration, skipping",
+					"deployment", deployment.Name, "hash", currentHash)
 				return nil
 			}
+			logger.Info("Sidecar configuration changed, updating deployment",
+				"deployment", deployment.Name,
+				"oldHash", existingHash,
+				"newHash", currentHash,
+				"newImage", vectorSidecar.Spec.Sidecar.Image)
 		}
 	}
 
@@ -401,7 +419,10 @@ func (r *VectorSidecarReconciler) injectSidecar(ctx context.Context, vectorSidec
 		return fmt.Errorf("failed to update deployment: %w", err)
 	}
 
-	logger.Info("Successfully injected sidecar", "deployment", deployment.Name, "hash", currentHash)
+	logger.Info("Successfully injected/updated sidecar - Kubernetes will perform rolling update",
+		"deployment", deployment.Name,
+		"hash", currentHash,
+		"image", vectorSidecar.Spec.Sidecar.Image)
 	return nil
 }
 
@@ -620,6 +641,5 @@ func (r *VectorSidecarReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&observabilityv1alpha1.VectorSidecar{}).
 		Owns(&appsv1.Deployment{}).
-		WithEventFilter(predicate.GenerationChangedPredicate{}).
 		Complete(r)
 }

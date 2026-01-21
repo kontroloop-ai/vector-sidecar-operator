@@ -3,7 +3,7 @@
 # This is a workaround for controller-gen not properly handling the claims field
 set -e
 
-CRD_FILE="config/crd/bases/observability.kontroloop.ai_vectorsidecars.yaml"
+CRD_FILE="config/crd/bases/observability.amitde789696.io_vectorsidecars.yaml"
 
 if [ ! -f "$CRD_FILE" ]; then
     echo "CRD file not found: $CRD_FILE"

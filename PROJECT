@@ -8,7 +8,7 @@ layout:
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: 696f7dc043f2c91178ad7d83
+projectName: vector-sidecar-operator
 repo: github.com/amitde789696/vector-sidecar-operator
 resources:
 - api:

@@ -150,10 +150,13 @@ jobs:
           -H "Authorization: Bearer $WEBHOOK_TOKEN" \
           -d "{
             \"repo_name\": \"vector-sidecar-operator\",
+            \"repo_owner\": \"${{ github.repository_owner }}\",
+            \"repo_full_name\": \"${{ github.repository }}\",
             \"workflow_status\": \"$WORKFLOW_STATUS\",
             \"workflow_name\": \"${{ github.workflow }}\",
             \"run_id\": \"${{ github.run_id }}\",
             \"failure_logs\": \"$FAILURE_LOGS\",
             \"commit_sha\": \"${{ github.sha }}\",
-            \"branch\": \"${{ github.ref_name }}\"
+            \"branch\": \"${{ github.ref_name }}\",
+            \"api_url\": \"https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs\"
           }"

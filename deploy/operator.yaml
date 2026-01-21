@@ -16,9 +16,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: vectorsidecars.observability.amitde789696.io
+  name: vectorsidecars.observability.kontroloop.ai
 spec:
-  group: observability.amitde789696.io
+  group: observability.observability.kontroloop.ai
   names:
     kind: VectorSidecar
     listKind: VectorSidecarList
@@ -3476,8 +3476,6 @@ spec:
                 operator: In
                 values:
                 - linux
-      imagePullSecrets:
-      - name: ghcr-image-pull-secret
       containers:
       - args:
         - --secure-listen-address=0.0.0.0:8443
@@ -3508,7 +3506,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: ghcr.io/amitde789696/vector-sidecar-operator:latest
+        image: ghcr.io/kontroloop-ai/vector-sidecar-operator:latest
         livenessProbe:
           httpGet:
             path: /healthz
@@ -3538,11 +3536,3 @@ spec:
         runAsNonRoot: true
       serviceAccountName: vector-sidecar-operator-controller-manager
       terminationGracePeriodSeconds: 10
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ghcr-image-pull-secret
-  namespace: vector-sidecar-operator-system
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJnaGNyLmlvIjp7ImF1dGgiOiJZVzFwZEdSbE56ZzVOams2WjJodlgwMDJWREpLU1hWcFRqWnFkblI1VW1WNmRXWk1SR1ZvU25kWFVWVjZNM0ZLY213PSJ9fX0=

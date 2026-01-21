@@ -16,9 +16,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: vectorsidecars.observability.amitde789696.io
+  name: vectorsidecars.observability.kontroloop.ai
 spec:
-  group: observability.amitde789696.io
+  group: observability.kontroloop.ai
   names:
     kind: VectorSidecar
     listKind: VectorSidecarList

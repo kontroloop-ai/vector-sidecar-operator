@@ -42,7 +42,7 @@ cd vector-sidecar-operator
 3. Add the upstream repository:
 
 ```bash
-git remote add upstream https://github.com/amitde789696/vector-sidecar-operator.git
+git remote add upstream https://github.com/kontroloop-ai/vector-sidecar-operator.git
 ```
 
 4. Verify remotes:
@@ -51,8 +51,8 @@ git remote add upstream https://github.com/amitde789696/vector-sidecar-operator.
 git remote -v
 # origin    https://github.com/YOUR_USERNAME/vector-sidecar-operator.git (fetch)
 # origin    https://github.com/YOUR_USERNAME/vector-sidecar-operator.git (push)
-# upstream  https://github.com/amitde789696/vector-sidecar-operator.git (fetch)
-# upstream  https://github.com/amitde789696/vector-sidecar-operator.git (push)
+# upstream  https://github.com/kontroloop-ai/vector-sidecar-operator.git (fetch)
+# upstream  https://github.com/kontroloop-ai/vector-sidecar-operator.git (push)
 ```
 
 ### Set Up Development Environment
@@ -176,7 +176,7 @@ Fixes #45
 git push origin feature/your-feature-name
 
 # Create PR on GitHub
-# Go to https://github.com/amitde789696/vector-sidecar-operator
+# Go to https://github.com/kontroloop-ai/vector-sidecar-operator
 # Click "New Pull Request"
 ```
 
@@ -432,9 +432,9 @@ docs/
 
 ### Getting Help
 
-- **GitHub Issues:** [Report bugs or request features](https://github.com/amitde789696/vector-sidecar-operator/issues)
-- **Discussions:** [Ask questions and share ideas](https://github.com/amitde789696/vector-sidecar-operator/discussions)
-- **Pull Requests:** [Contribute code](https://github.com/amitde789696/vector-sidecar-operator/pulls)
+- **GitHub Issues:** [Report bugs or request features](https://github.com/kontroloop-ai/vector-sidecar-operator/issues)
+- **Discussions:** [Ask questions and share ideas](https://github.com/kontroloop-ai/vector-sidecar-operator/discussions)
+- **Pull Requests:** [Contribute code](https://github.com/kontroloop-ai/vector-sidecar-operator/pulls)
 
 ### Issue Labels
 
@@ -479,8 +479,8 @@ Contributors will be:
 
 If you have questions about contributing:
 
-1. Check existing [Issues](https://github.com/amitde789696/vector-sidecar-operator/issues) and [Discussions](https://github.com/amitde789696/vector-sidecar-operator/discussions)
-2. Open a new [Discussion](https://github.com/amitde789696/vector-sidecar-operator/discussions/new)
+1. Check existing [Issues](https://github.com/kontroloop-ai/vector-sidecar-operator/issues) and [Discussions](https://github.com/kontroloop-ai/vector-sidecar-operator/discussions)
+2. Open a new [Discussion](https://github.com/kontroloop-ai/vector-sidecar-operator/discussions/new)
 3. Reach out to maintainers
 
 ## Thank You!

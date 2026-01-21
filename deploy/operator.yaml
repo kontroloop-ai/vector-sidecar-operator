@@ -147,7 +147,6 @@ spec:
                                 required:
                                 - key
                                 type: object
-                                
                               fieldRef:
                                 description: |-
                                   Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`,
@@ -162,7 +161,6 @@ spec:
                                 required:
                                 - fieldPath
                                 type: object
-                                
                               resourceFieldRef:
                                 description: |-
                                   Selects a resource of the container: only resources limits and requests
@@ -184,7 +182,6 @@ spec:
                                 required:
                                 - resource
                                 type: object
-                                
                               secretKeyRef:
                                 description: Selects a key of a secret in the pod's namespace
                                 properties:
@@ -203,7 +200,6 @@ spec:
                                 required:
                                 - key
                                 type: object
-                                
                             type: object
                         required:
                         - name
@@ -233,7 +229,6 @@ spec:
                                 description: Specify whether the ConfigMap must be defined
                                 type: boolean
                             type: object
-                            
                           prefix:
                             description: An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
                             type: string
@@ -250,7 +245,6 @@ spec:
                                 description: Specify whether the Secret must be defined
                                 type: boolean
                             type: object
-                            
                         type: object
                       type: array
                     image:
@@ -653,10 +647,6 @@ spec:
                         - containerPort
                         type: object
                       type: array
-                      
-                      - containerPort
-                      - protocol
-                      
                     readinessProbe:
                       description: |-
                         Periodic probe of container service readiness.
@@ -835,9 +825,7 @@ spec:
                             required:
                             - name
                             type: object
-                            
                           type: array
-                          
                         limits:
                           additionalProperties:
                             anyOf:
@@ -1334,7 +1322,6 @@ spec:
                       operator is "In", and the values array contains only "value". The requirements are ANDed.
                     type: object
                 type: object
-                
               sidecar:
                 description: Sidecar defines the Vector sidecar container configuration
                 properties:
@@ -1404,7 +1391,6 @@ spec:
                               required:
                               - key
                               type: object
-                              
                             fieldRef:
                               description: |-
                                 Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`,
@@ -1419,7 +1405,6 @@ spec:
                               required:
                               - fieldPath
                               type: object
-                              
                             resourceFieldRef:
                               description: |-
                                 Selects a resource of the container: only resources limits and requests
@@ -1441,7 +1426,6 @@ spec:
                               required:
                               - resource
                               type: object
-                              
                             secretKeyRef:
                               description: Selects a key of a secret in the pod's namespace
                               properties:
@@ -1460,7 +1444,6 @@ spec:
                               required:
                               - key
                               type: object
-                              
                           type: object
                       required:
                       - name
@@ -1504,9 +1487,7 @@ spec:
                           required:
                           - name
                           type: object
-                          
                         type: array
-                        
                       limits:
                         additionalProperties:
                           anyOf:
@@ -1702,7 +1683,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         user:
                           description: |-
                             user is optional: User is the rados user name, default is admin
@@ -1741,7 +1721,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         volumeID:
                           description: |-
                             volumeID used to identify the volume in cinder.
@@ -1811,7 +1790,6 @@ spec:
                           description: optional specify whether the ConfigMap or its keys must be defined
                           type: boolean
                       type: object
-                      
                     csi:
                       description: csi (Container Storage Interface) represents ephemeral storage that is handled by certain external CSI drivers (Beta feature).
                       properties:
@@ -1841,7 +1819,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         readOnly:
                           description: |-
                             readOnly specifies a read-only configuration for the volume.
@@ -1889,7 +1866,6 @@ spec:
                                 required:
                                 - fieldPath
                                 type: object
-                                
                               mode:
                                 description: |-
                                   Optional: mode bits used to set permissions on this file, must be an octal value
@@ -1924,7 +1900,6 @@ spec:
                                 required:
                                 - resource
                                 type: object
-                                
                             required:
                             - path
                             type: object
@@ -2061,7 +2036,6 @@ spec:
                                   - kind
                                   - name
                                   type: object
-                                  
                                 dataSourceRef:
                                   description: |-
                                     dataSourceRef specifies the object from which to populate the volume with data, if a non-empty
@@ -2141,9 +2115,7 @@ spec:
                                         required:
                                         - name
                                         type: object
-                                        
                                       type: array
-                                      
                                     limits:
                                       additionalProperties:
                                         anyOf:
@@ -2210,7 +2182,6 @@ spec:
                                         operator is "In", and the values array contains only "value". The requirements are ANDed.
                                       type: object
                                   type: object
-                                  
                                 storageClassName:
                                   description: |-
                                     storageClassName is the name of the StorageClass required by the claim.
@@ -2300,7 +2271,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                       required:
                       - driver
                       type: object
@@ -2487,7 +2457,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         targetPortal:
                           description: |-
                             targetPortal is iSCSI Target Portal. The Portal is either an IP or ip_addr:port if the port
@@ -2651,7 +2620,6 @@ spec:
                                     description: optional specify whether the ConfigMap or its keys must be defined
                                     type: boolean
                                 type: object
-                                
                               downwardAPI:
                                 description: downwardAPI information about the downwardAPI data to project
                                 properties:
@@ -2672,7 +2640,6 @@ spec:
                                           required:
                                           - fieldPath
                                           type: object
-                                          
                                         mode:
                                           description: |-
                                             Optional: mode bits used to set permissions on this file, must be an octal value
@@ -2707,7 +2674,6 @@ spec:
                                           required:
                                           - resource
                                           type: object
-                                          
                                       required:
                                       - path
                                       type: object
@@ -2763,7 +2729,6 @@ spec:
                                     description: optional field specify whether the Secret or its key must be defined
                                     type: boolean
                                 type: object
-                                
                               serviceAccountToken:
                                 description: serviceAccountToken is information about the serviceAccountToken data to project
                                 properties:
@@ -2888,7 +2853,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         user:
                           description: |-
                             user is the rados user name.
@@ -2932,7 +2896,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         sslEnabled:
                           description: sslEnabled Flag enable/disable SSL communication with Gateway, default false
                           type: boolean
@@ -3045,7 +3008,6 @@ spec:
                                 TODO: Add other useful fields. apiVersion, kind, uid?
                               type: string
                           type: object
-                          
                         volumeName:
                           description: |-
                             volumeName is the human-readable name of the StorageOS volume.  Volume
@@ -3476,8 +3438,6 @@ spec:
                 operator: In
                 values:
                 - linux
-      imagePullSecrets:
-      - name: ghcr-image-pull-secret
       containers:
       - args:
         - --secure-listen-address=0.0.0.0:8443
@@ -3538,11 +3498,3 @@ spec:
         runAsNonRoot: true
       serviceAccountName: vector-sidecar-operator-controller-manager
       terminationGracePeriodSeconds: 10
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ghcr-image-pull-secret
-  namespace: vector-sidecar-operator-system
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJnaGNyLmlvIjp7ImF1dGgiOiJZVzFwZEdSbE56ZzVOams2WjJodlgwMDJWREpLU1hWcFRqWnFkblI1VW1WNmRXWk1SR1ZvU25kWFVWVjZNM0ZLY213PSJ9fX0=

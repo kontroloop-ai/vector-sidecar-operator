@@ -670,10 +670,6 @@ spec:
                         - containerPort
                         type: object
                       type: array
-                      
-                      - containerPort
-                      - protocol
-                      
                     readinessProbe:
                       description: |-
                         Periodic probe of container service readiness.

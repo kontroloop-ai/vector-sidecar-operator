@@ -125,7 +125,7 @@ spec:
       observability: vector
   sidecar:
     name: vector
-    image: timberio/vector:0.35.0
+    image: timberio/vector:0.35.0-alpine
     config:
       configMapRef:
         name: vector-config
@@ -260,7 +260,7 @@ spec:
     matchLabels:
       env: production
   sidecar:
-    image: timberio/vector:0.35.0
+    image: timberio/vector:0.35.0-alpine
     config:
       configMapRef:
         name: vector-config-prod
@@ -275,7 +275,7 @@ spec:
     matchLabels:
       env: development
   sidecar:
-    image: timberio/vector:0.35.0
+    image: timberio/vector:0.35.0-alpine
     config:
       configMapRef:
         name: vector-config-dev

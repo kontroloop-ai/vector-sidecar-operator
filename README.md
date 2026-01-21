@@ -85,16 +85,16 @@ For development environments where port conflicts may occur:
 make run ARGS="--disable-metrics --disable-health-probes"
 ```
 
-### Deploy from GitHub (No Authentication Required)
+### Deploy from GitHub
 
-Since this repository is public, you can deploy the operator directly using raw.githubusercontent.com without needing to clone the repository or authenticate:
+Deploy the operator directly using raw.githubusercontent.com:
 
 #### Deploy Everything (Recommended)
 
 Deploy the complete operator including CRDs, RBAC, and the controller:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/deploy/operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/deploy/operator.yaml
 ```
 
 This single command installs:
@@ -109,31 +109,31 @@ If you prefer to install components separately:
 
 **1. Install CRDs only:**
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/config/crd/bases/observability.kontroloop.ai_vectorsidecars.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/config/crd/bases/observability.kontroloop.ai_vectorsidecars.yaml
 ```
 
 **2. Deploy example configurations:**
 ```bash
 # Vector configuration ConfigMap
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/examples/vector-config.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/examples/vector-config.yaml
 
 # Sample VectorSidecar CR
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/examples/example-cr.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/examples/example-cr.yaml
 
 # Test deployment to verify injection
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/examples/test-deployment.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/examples/test-deployment.yaml
 ```
 
 **3. Deploy from a specific branch:**
 ```bash
 # Deploy from feature branch
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/feature/vector-sidecar-operator/deploy/operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/feature/vector-sidecar-operator/deploy/operator.yaml
 ```
 
 **4. Deploy from a specific tag/release:**
 ```bash
 # Deploy from a tagged version
-kubectl apply -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/v1.0.0/deploy/operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/v1.0.0/deploy/operator.yaml
 ```
 
 #### Verify Installation
@@ -156,7 +156,7 @@ kubectl logs -n vector-sidecar-operator-system deployment/vector-sidecar-operato
 To remove the operator and all its components:
 
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/amitde789696/vector-sidecar-operator/main/deploy/operator.yaml
+kubectl delete -f https://raw.githubusercontent.com/kontroloop-ai/vector-sidecar-operator/main/deploy/operator.yaml
 ```
 
 **Note:** This will remove all VectorSidecar CRs and their associated resources.

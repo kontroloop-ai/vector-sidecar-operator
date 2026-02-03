@@ -3470,7 +3470,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: ghcr.io/amitde789696/vector-sidecar-operator:latest
+        image: ghcr.io/kontroloop-ai/vector-sidecar-operator:latest
         livenessProbe:
           httpGet:
             path: /healthz
